@@ -9,7 +9,7 @@
 //     After getting your key, replace "YOUR_API_KEY_HERE" below with
 //     the actual key (e.g., "abc12345").
 //
-//     Example: export const OMDB_API_KEY = "abc12345";
+//     Example: export const OMDB_API_KEY = "986f8163";
 //
 // ============================================================
 
