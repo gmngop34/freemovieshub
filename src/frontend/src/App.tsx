@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/sonner";
 import {
   Outlet,
   RouterProvider,
@@ -5,17 +6,44 @@ import {
   createRoute,
   createRouter,
 } from "@tanstack/react-router";
-import { HomePage } from "./pages/HomePage";
-import { MoviesPage } from "./pages/MoviesPage";
-import { PlayerPage } from "./pages/PlayerPage";
+import { useState } from "react";
+import FloatingContactButton from "./components/movies/FloatingContactButton";
+import Footer from "./components/movies/Footer";
+import Navbar from "./components/movies/Navbar";
+import Sidebar from "./components/movies/Sidebar";
+import HomePage from "./pages/HomePage";
+import MoviesPage from "./pages/MoviesPage";
 
 // Root layout
-const rootRoute = createRootRoute({
-  component: () => <Outlet />,
-});
+function RootLayout() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  return (
+    <div
+      className="min-h-screen bg-background flex flex-col"
+      style={{ colorScheme: "dark" }}
+    >
+      <Navbar
+        onMenuToggle={() => setIsSidebarOpen((v) => !v)}
+        isSidebarOpen={isSidebarOpen}
+      />
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <div className="flex-1 flex flex-col pt-16">
+        <Outlet />
+        <Footer />
+      </div>
+      <FloatingContactButton />
+      <Toaster theme="dark" position="bottom-center" richColors />
+    </div>
+  );
+}
 
 // Routes
-const homeRoute = createRoute({
+const rootRoute = createRootRoute({
+  component: RootLayout,
+});
+
+const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
   component: HomePage,
@@ -24,24 +52,12 @@ const homeRoute = createRoute({
 const moviesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/movies",
-  validateSearch: (search: Record<string, unknown>) => ({
-    category: typeof search.category === "string" ? search.category : undefined,
-  }),
   component: MoviesPage,
 });
 
-const playerRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/player/$id",
-  component: PlayerPage,
-});
+const routeTree = rootRoute.addChildren([indexRoute, moviesRoute]);
 
-const routeTree = rootRoute.addChildren([homeRoute, moviesRoute, playerRoute]);
-
-const router = createRouter({
-  routeTree,
-  defaultPreload: "intent",
-});
+const router = createRouter({ routeTree });
 
 declare module "@tanstack/react-router" {
   interface Register {

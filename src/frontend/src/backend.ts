@@ -93,64 +93,31 @@ export interface Movie {
     id: bigint;
     title: string;
     quality: string;
+    year: string;
     description: string;
-    downloadUrl: string;
-    genre: string;
-    posterUrl: string;
+    omdbId: string;
     category: string;
-    videoUrl: string;
-    releaseDate: string;
-    runtime: string;
+    poster: string;
 }
 export interface backendInterface {
-    addMovie(movie: Movie): Promise<void>;
-    deleteMovie(id: bigint): Promise<void>;
-    getMovieById(id: bigint): Promise<Movie>;
+    addMovie(omdbId: string, title: string, quality: string, category: string, description: string, year: string, poster: string): Promise<bigint>;
     getMovies(): Promise<Array<Movie>>;
     getMoviesByCategory(category: string): Promise<Array<Movie>>;
-    updateMovie(id: bigint, movie: Movie): Promise<void>;
+    removeMovie(id: bigint): Promise<void>;
 }
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
-    async addMovie(arg0: Movie): Promise<void> {
+    async addMovie(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string, arg6: string): Promise<bigint> {
         if (this.processError) {
             try {
-                const result = await this.actor.addMovie(arg0);
+                const result = await this.actor.addMovie(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.addMovie(arg0);
-            return result;
-        }
-    }
-    async deleteMovie(arg0: bigint): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.deleteMovie(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.deleteMovie(arg0);
-            return result;
-        }
-    }
-    async getMovieById(arg0: bigint): Promise<Movie> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getMovieById(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getMovieById(arg0);
+            const result = await this.actor.addMovie(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
             return result;
         }
     }
@@ -182,17 +149,17 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async updateMovie(arg0: bigint, arg1: Movie): Promise<void> {
+    async removeMovie(arg0: bigint): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateMovie(arg0, arg1);
+                const result = await this.actor.removeMovie(arg0);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateMovie(arg0, arg1);
+            const result = await this.actor.removeMovie(arg0);
             return result;
         }
     }

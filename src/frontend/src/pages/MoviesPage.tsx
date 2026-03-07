@@ -1,185 +1,97 @@
-import { CategorySection } from "@/components/shared/CategorySection";
-import { MovieCard } from "@/components/shared/MovieCard";
-import { Navbar } from "@/components/shared/Navbar";
-import { CATEGORIES, MOVIES } from "@/data/movies";
-import { useSearch } from "@tanstack/react-router";
-import { Mail } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useMemo, useState } from "react";
+import type { Movie } from "../backend.d";
+import CategoryFilters from "../components/movies/CategoryFilters";
+import MovieDetailModal from "../components/movies/MovieDetailModal";
+import MovieGrid from "../components/movies/MovieGrid";
+import { useGetMovies } from "../hooks/useQueries";
+import { SAMPLE_MOVIES } from "../sampleMovies";
 
-export function MoviesPage() {
-  const [searchQuery, setSearchQuery] = useState("");
+const PAGE_SIZE = 24;
 
-  const searchParams = useSearch({ from: "/movies" });
-  const urlCategory =
-    searchParams &&
-    typeof searchParams === "object" &&
-    "category" in searchParams
-      ? ((searchParams as { category?: string }).category ?? "All")
-      : "All";
+export default function MoviesPage() {
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [page, setPage] = useState(1);
 
-  const [activeCategory, setActiveCategory] = useState<string>(urlCategory);
+  const { data: backendMovies, isLoading } = useGetMovies();
+  const allMovies =
+    backendMovies && backendMovies.length > 0 ? backendMovies : SAMPLE_MOVIES;
 
-  const isSearching = searchQuery.trim().length > 0;
-  const searchResults = isSearching
-    ? MOVIES.filter((m) =>
-        m.title.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-    : [];
+  const filteredMovies = useMemo(() => {
+    return activeCategory === "All"
+      ? allMovies
+      : allMovies.filter((m) => m.category === activeCategory);
+  }, [allMovies, activeCategory]);
 
-  const filterTabs = ["All", ...CATEGORIES];
+  const paginatedMovies = filteredMovies.slice(0, page * PAGE_SIZE);
+  const hasMore = paginatedMovies.length < filteredMovies.length;
 
-  const moviesByCategory = CATEGORIES.map((cat) => ({
-    category: cat,
-    movies: MOVIES.filter((m) => m.category === cat),
-  }));
+  const handleMovieClick = (movie: Movie) => {
+    setSelectedMovie(movie);
+    setIsModalOpen(true);
+  };
 
-  const filteredSections =
-    activeCategory === "All"
-      ? moviesByCategory
-      : moviesByCategory.filter((s) => s.category === activeCategory);
+  const handleCategoryChange = (cat: string) => {
+    setActiveCategory(cat);
+    setPage(1);
+  };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-
-      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 py-8">
-        {/* Page heading */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="mb-6"
-        >
-          <h1 className="font-display text-2xl sm:text-3xl font-extrabold">
-            All Movies
-          </h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            Browse {MOVIES.length} titles across all categories
-          </p>
-        </motion.div>
-
-        {/* Category Filter */}
-        <div className="flex items-center gap-2 flex-wrap mb-8">
-          {filterTabs.map((tab) => (
-            <button
-              type="button"
-              key={tab}
-              onClick={() => setActiveCategory(tab)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
-                activeCategory === tab
-                  ? "text-black"
-                  : "text-muted-foreground border border-border hover:border-brand/40 hover:text-foreground"
-              }`}
-              style={
-                activeCategory === tab
-                  ? {
-                      background: "oklch(0.68 0.2 142)",
-                      boxShadow: "0 0 12px oklch(0.68 0.2 142 / 0.4)",
-                    }
-                  : {}
-              }
-            >
-              {tab}
-            </button>
-          ))}
+    <div className="min-h-screen bg-background pt-20">
+      <main className="px-4 md:px-8 lg:px-12 pb-20">
+        {/* Page header */}
+        <div className="flex items-center justify-between mb-6 mt-4">
+          <div>
+            <h1 className="font-display font-black text-2xl md:text-3xl text-foreground tracking-tight">
+              <span style={{ color: "oklch(0.72 0.22 148)" }}>All</span> Movies
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              {filteredMovies.length}{" "}
+              {filteredMovies.length === 1 ? "movie" : "movies"} available
+            </p>
+          </div>
         </div>
 
-        {/* Content */}
-        <AnimatePresence mode="wait">
-          {isSearching ? (
-            <motion.section
-              key="search"
-              data-ocid="search.results_section"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+        {/* Category filters */}
+        <div className="mb-6">
+          <CategoryFilters
+            active={activeCategory}
+            onChange={handleCategoryChange}
+          />
+        </div>
+
+        {/* Movie grid */}
+        <MovieGrid
+          movies={paginatedMovies}
+          isLoading={isLoading}
+          onMovieClick={handleMovieClick}
+          emptyMessage="No movies in this category yet."
+        />
+
+        {/* Load More */}
+        {hasMore && !isLoading && (
+          <div className="flex justify-center mt-10">
+            <Button
+              data-ocid="movies.pagination_next"
+              onClick={() => setPage((p) => p + 1)}
+              variant="outline"
+              className="px-8 h-11 rounded-full font-semibold border-border/60 hover:border-green/40 hover:bg-accent/50"
             >
-              <h2 className="font-display text-lg font-bold mb-4">
-                Search: &ldquo;{searchQuery}&rdquo;
-                <span className="text-muted-foreground text-base font-normal ml-2">
-                  ({searchResults.length} found)
-                </span>
-              </h2>
-              {searchResults.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
-                  {searchResults.map((movie, idx) => (
-                    <MovieCard
-                      key={String(movie.id)}
-                      movie={movie}
-                      index={idx}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div
-                  data-ocid="search.empty_state"
-                  className="text-center py-20 text-muted-foreground"
-                >
-                  <p className="text-lg">
-                    No results for &ldquo;{searchQuery}&rdquo;
-                  </p>
-                </div>
-              )}
-            </motion.section>
-          ) : (
-            <motion.div
-              key="categories"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {filteredSections.map((section) => (
-                <CategorySection
-                  key={section.category}
-                  title={section.category}
-                  movies={section.movies}
-                  showViewMore={false}
-                />
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
+              Load More ({filteredMovies.length - paginatedMovies.length}{" "}
+              remaining)
+            </Button>
+          </div>
+        )}
       </main>
 
-      {/* Floating Contact Button */}
-      <motion.button
-        type="button"
-        data-ocid="home.contact_button"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center"
-        style={{
-          background: "oklch(0.68 0.2 142)",
-          boxShadow: "0 0 25px oklch(0.68 0.2 142 / 0.55)",
-        }}
-        aria-label="Contact us"
-        onClick={() => window.open("mailto:contact@freemovieshub.com")}
-      >
-        <Mail size={22} className="text-black" />
-      </motion.button>
-
-      {/* Footer */}
-      <footer
-        className="border-t border-border py-6 mt-8"
-        style={{ background: "oklch(0.07 0.006 240)" }}
-      >
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 text-center">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()}.{" "}
-            <span className="text-brand font-semibold">FreeMoviesHUB</span>.
-            Built with love using{" "}
-            <a
-              href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-brand transition-colors"
-            >
-              caffeine.ai
-            </a>
-          </p>
-        </div>
-      </footer>
+      {/* Movie detail modal */}
+      <MovieDetailModal
+        movie={selectedMovie}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }

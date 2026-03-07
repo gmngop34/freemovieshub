@@ -16,8 +16,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Outfit", "sans-serif"],
-        display: ["Bricolage Grotesque", "sans-serif"],
+        sans: ["Mona Sans", "Cabinet Grotesk", "system-ui", "sans-serif"],
+        display: ["Cabinet Grotesk", "Mona Sans", "system-ui", "sans-serif"],
+        mono: ["monospace"],
       },
       colors: {
         border: "oklch(var(--border))",
@@ -70,21 +71,24 @@ export default {
           border: "oklch(var(--sidebar-border))",
           ring: "oklch(var(--sidebar-ring))",
         },
-        brand: {
-          DEFAULT: "oklch(0.68 0.2 142)",
-          dim: "oklch(0.55 0.18 142)",
-          bright: "oklch(0.78 0.22 142)",
+        // Custom tokens
+        green: {
+          DEFAULT: "oklch(var(--green))",
+          glow: "oklch(var(--green-glow))",
         },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        xl: "calc(var(--radius) + 4px)",
+        "2xl": "calc(var(--radius) + 8px)",
       },
       boxShadow: {
         xs: "0 1px 2px 0 rgba(0,0,0,0.05)",
-        "brand-glow": "0 0 20px oklch(0.68 0.2 142 / 0.4), 0 0 40px oklch(0.68 0.2 142 / 0.2)",
-        "card-hover": "0 0 25px oklch(0.68 0.2 142 / 0.35), 0 8px 30px rgba(0,0,0,0.7)",
+        glow: "0 0 20px oklch(0.72 0.22 148 / 0.4)",
+        "card-hover": "0 8px 30px oklch(0 0 0 / 0.6), 0 0 0 1px oklch(0.72 0.22 148 / 0.3)",
+        cinema: "0 20px 60px oklch(0 0 0 / 0.8)",
       },
       keyframes: {
         "accordion-down": {
@@ -104,15 +108,21 @@ export default {
           to: { transform: "translateX(-100%)" },
         },
         "fade-in": {
-          from: { opacity: "0", transform: "translateY(10px)" },
+          from: { opacity: "0", transform: "translateY(8px)" },
           to: { opacity: "1", transform: "translateY(0)" },
+        },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "slide-in-left": "slide-in-left 0.3s ease-out",
+        "slide-out-left": "slide-out-left 0.3s ease-in",
         "fade-in": "fade-in 0.4s ease-out",
+        shimmer: "shimmer 2s infinite linear",
       },
     },
   },

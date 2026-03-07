@@ -11,20 +11,15 @@ export interface Movie {
     id: bigint;
     title: string;
     quality: string;
+    year: string;
     description: string;
-    downloadUrl: string;
-    genre: string;
-    posterUrl: string;
+    omdbId: string;
     category: string;
-    videoUrl: string;
-    releaseDate: string;
-    runtime: string;
+    poster: string;
 }
 export interface backendInterface {
-    addMovie(movie: Movie): Promise<void>;
-    deleteMovie(id: bigint): Promise<void>;
-    getMovieById(id: bigint): Promise<Movie>;
+    addMovie(omdbId: string, title: string, quality: string, category: string, description: string, year: string, poster: string): Promise<bigint>;
     getMovies(): Promise<Array<Movie>>;
     getMoviesByCategory(category: string): Promise<Array<Movie>>;
-    updateMovie(id: bigint, movie: Movie): Promise<void>;
+    removeMovie(id: bigint): Promise<void>;
 }

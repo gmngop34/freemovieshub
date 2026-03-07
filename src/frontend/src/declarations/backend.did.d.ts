@@ -14,22 +14,20 @@ export interface Movie {
   'id' : bigint,
   'title' : string,
   'quality' : string,
+  'year' : string,
   'description' : string,
-  'downloadUrl' : string,
-  'genre' : string,
-  'posterUrl' : string,
+  'omdbId' : string,
   'category' : string,
-  'videoUrl' : string,
-  'releaseDate' : string,
-  'runtime' : string,
+  'poster' : string,
 }
 export interface _SERVICE {
-  'addMovie' : ActorMethod<[Movie], undefined>,
-  'deleteMovie' : ActorMethod<[bigint], undefined>,
-  'getMovieById' : ActorMethod<[bigint], Movie>,
+  'addMovie' : ActorMethod<
+    [string, string, string, string, string, string, string],
+    bigint
+  >,
   'getMovies' : ActorMethod<[], Array<Movie>>,
   'getMoviesByCategory' : ActorMethod<[string], Array<Movie>>,
-  'updateMovie' : ActorMethod<[bigint, Movie], undefined>,
+  'removeMovie' : ActorMethod<[bigint], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

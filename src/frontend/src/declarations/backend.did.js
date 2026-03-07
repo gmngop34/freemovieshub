@@ -12,23 +12,22 @@ export const Movie = IDL.Record({
   'id' : IDL.Nat,
   'title' : IDL.Text,
   'quality' : IDL.Text,
+  'year' : IDL.Text,
   'description' : IDL.Text,
-  'downloadUrl' : IDL.Text,
-  'genre' : IDL.Text,
-  'posterUrl' : IDL.Text,
+  'omdbId' : IDL.Text,
   'category' : IDL.Text,
-  'videoUrl' : IDL.Text,
-  'releaseDate' : IDL.Text,
-  'runtime' : IDL.Text,
+  'poster' : IDL.Text,
 });
 
 export const idlService = IDL.Service({
-  'addMovie' : IDL.Func([Movie], [], []),
-  'deleteMovie' : IDL.Func([IDL.Nat], [], []),
-  'getMovieById' : IDL.Func([IDL.Nat], [Movie], ['query']),
+  'addMovie' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Nat],
+      [],
+    ),
   'getMovies' : IDL.Func([], [IDL.Vec(Movie)], ['query']),
   'getMoviesByCategory' : IDL.Func([IDL.Text], [IDL.Vec(Movie)], ['query']),
-  'updateMovie' : IDL.Func([IDL.Nat, Movie], [], []),
+  'removeMovie' : IDL.Func([IDL.Nat], [], []),
 });
 
 export const idlInitArgs = [];
@@ -38,23 +37,22 @@ export const idlFactory = ({ IDL }) => {
     'id' : IDL.Nat,
     'title' : IDL.Text,
     'quality' : IDL.Text,
+    'year' : IDL.Text,
     'description' : IDL.Text,
-    'downloadUrl' : IDL.Text,
-    'genre' : IDL.Text,
-    'posterUrl' : IDL.Text,
+    'omdbId' : IDL.Text,
     'category' : IDL.Text,
-    'videoUrl' : IDL.Text,
-    'releaseDate' : IDL.Text,
-    'runtime' : IDL.Text,
+    'poster' : IDL.Text,
   });
   
   return IDL.Service({
-    'addMovie' : IDL.Func([Movie], [], []),
-    'deleteMovie' : IDL.Func([IDL.Nat], [], []),
-    'getMovieById' : IDL.Func([IDL.Nat], [Movie], ['query']),
+    'addMovie' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Nat],
+        [],
+      ),
     'getMovies' : IDL.Func([], [IDL.Vec(Movie)], ['query']),
     'getMoviesByCategory' : IDL.Func([IDL.Text], [IDL.Vec(Movie)], ['query']),
-    'updateMovie' : IDL.Func([IDL.Nat, Movie], [], []),
+    'removeMovie' : IDL.Func([IDL.Nat], [], []),
   });
 };
 

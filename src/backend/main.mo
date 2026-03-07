@@ -1,216 +1,178 @@
-import Map "mo:core/Map";
-import Array "mo:core/Array";
-import Nat "mo:core/Nat";
 import Text "mo:core/Text";
+import Nat "mo:core/Nat";
+import Array "mo:core/Array";
+import Map "mo:core/Map";
 import Runtime "mo:core/Runtime";
-import Iter "mo:core/Iter";
 
 actor {
   type Movie = {
     id : Nat;
+    omdbId : Text;
     title : Text;
-    description : Text;
-    releaseDate : Text;
-    runtime : Text;
-    genre : Text;
     quality : Text;
-    posterUrl : Text;
-    videoUrl : Text;
-    downloadUrl : Text;
     category : Text;
+    description : Text;
+    year : Text;
+    poster : Text;
   };
+
+  var nextId = 13;
 
   let movies = Map.fromIter<Nat, Movie>([
     (
       1,
       {
         id = 1;
-        title = "Inception";
-        description = "A skilled thief leads a team into people's dreams to steal secrets.";
-        releaseDate = "2010-07-16";
-        runtime = "148 minutes";
-        genre = "Science Fiction";
+        omdbId = "tt0111161";
+        title = "The Shawshank Redemption";
         quality = "BluRay";
-        posterUrl = "https://picsum.photos/200/300?random=1";
-        videoUrl = "https://www.youtube.com/embed/8hP9D6kZseM";
-        downloadUrl = "https://example.com/inception-download";
-        category = "Featured";
+        category = "Top IMDb";
+        description = "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.";
+        year = "1994";
+        poster = "https://example.com/shawshank.jpg";
       },
     ),
     (
       2,
       {
         id = 2;
-        title = "The Shawshank Redemption";
-        description = "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.";
-        releaseDate = "1994-09-23";
-        runtime = "142 minutes";
-        genre = "Drama";
-        quality = "BluRay";
-        posterUrl = "https://picsum.photos/200/300?random=2";
-        videoUrl = "https://www.youtube.com/embed/NmzuHjWmXOc";
-        downloadUrl = "https://example.com/shawshank-download";
-        category = "Top IMDb";
+        omdbId = "tt0068646";
+        title = "The Godfather";
+        quality = "WebRip";
+        category = "Featured";
+        description = "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.";
+        year = "1972";
+        poster = "https://example.com/godfather.jpg";
       },
     ),
     (
       3,
       {
         id = 3;
-        title = "Avengers: Endgame";
-        description = "The Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe.";
-        releaseDate = "2019-04-26";
-        runtime = "181 minutes";
-        genre = "Action";
-        quality = "WebRip";
-        posterUrl = "https://picsum.photos/200/300?random=3";
-        videoUrl = "https://www.youtube.com/embed/TcMBFSGVi1c";
-        downloadUrl = "https://example.com/endgame-download";
+        omdbId = "tt0468569";
+        title = "The Dark Knight";
+        quality = "HDTC";
         category = "Trending";
+        description = "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.";
+        year = "2008";
+        poster = "https://example.com/darkknight.jpg";
       },
     ),
     (
       4,
       {
         id = 4;
-        title = "The Dark Knight";
-        description = "Batman faces off against the Joker, a criminal mastermind who seeks to create chaos in Gotham City.";
-        releaseDate = "2008-07-18";
-        runtime = "152 minutes";
-        genre = "Action";
-        quality = "BluRay";
-        posterUrl = "https://picsum.photos/200/300?random=4";
-        videoUrl = "https://www.youtube.com/embed/EXeTwQWrcwY";
-        downloadUrl = "https://example.com/darkknight-download";
+        omdbId = "tt0108052";
+        title = "Schindler's List";
+        quality = "WebRip";
         category = "Top IMDb";
+        description = "In German-occupied Poland during World War II, Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis.";
+        year = "1993";
+        poster = "https://example.com/schindlerslist.jpg";
       },
     ),
     (
       5,
       {
         id = 5;
-        title = "Interstellar";
-        description = "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.";
-        releaseDate = "2014-11-07";
-        runtime = "169 minutes";
-        genre = "Science Fiction";
+        omdbId = "tt1375666";
+        title = "Inception";
         quality = "BluRay";
-        posterUrl = "https://picsum.photos/200/300?random=5";
-        videoUrl = "https://www.youtube.com/embed/zSWdZVtXT7E";
-        downloadUrl = "https://example.com/interstellar-download";
-        category = "Featured";
+        category = "New Release";
+        description = "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.";
+        year = "2010";
+        poster = "https://example.com/inception.jpg";
       },
     ),
     (
       6,
       {
         id = 6;
-        title = "Joker";
-        description = "A mentally troubled comedian's descent into madness becomes the start of his criminal career as the clown-faced criminal.";
-        releaseDate = "2019-10-04";
-        runtime = "122 minutes";
-        genre = "Crime";
+        omdbId = "tt0137523";
+        title = "Fight Club";
         quality = "WebRip";
-        posterUrl = "https://picsum.photos/200/300?random=6";
-        videoUrl = "https://www.youtube.com/embed/zAGVQLHvwOY";
-        downloadUrl = "https://example.com/joker-download";
-        category = "Trending";
+        category = "Featured";
+        description = "An insomniac office worker and a devil-may-care soap maker form an underground fight club that evolves into something much, much more.";
+        year = "1999";
+        poster = "https://example.com/fightclub.jpg";
       },
     ),
     (
       7,
       {
         id = 7;
-        title = "Pulp Fiction";
-        description = "The lives of two mob hitmen, a boxer, a gangster's wife, and police's tale intertwine in crime.";
-        releaseDate = "1994-10-14";
-        runtime = "154 minutes";
-        genre = "Crime";
+        omdbId = "tt0167260";
+        title = "The Lord of the Rings: The Return of the King";
         quality = "BluRay";
-        posterUrl = "https://picsum.photos/200/300?random=7";
-        videoUrl = "https://www.youtube.com/embed/s7EdQ4FqbhY";
-        downloadUrl = "https://example.com/pulpfiction-download";
         category = "Top IMDb";
+        description = "Gandalf and Aragorn lead the World of Men against Sauron's army to draw his gaze from Frodo and Sam as they approach Mount Doom with the One Ring.";
+        year = "2003";
+        poster = "https://example.com/lotr3.jpg";
       },
     ),
     (
       8,
       {
         id = 8;
-        title = "Tenet";
-        description = "A secret agent embarks on a dangerous, time-bending mission to prevent the start of World War III.";
-        releaseDate = "2020-08-26";
-        runtime = "150 minutes";
-        genre = "Action";
-        quality = "HDTC";
-        posterUrl = "https://picsum.photos/200/300?random=8";
-        videoUrl = "https://www.youtube.com/embed/LdOM0x0XDMo";
-        downloadUrl = "https://example.com/tenet-download";
-        category = "New Release";
+        omdbId = "tt0080684";
+        title = "Star Wars: Episode V - The Empire Strikes Back";
+        quality = "WebRip";
+        category = "Trending";
+        description = "After the Rebels are brutally overpowered by the Empire on the ice planet Hoth, Luke Skywalker begins Jedi training with Yoda, while his friends are pursued by Darth Vader and bounty hunter Boba Fett all over the galaxy.";
+        year = "1980";
+        poster = "https://example.com/starwars5.jpg";
       },
     ),
     (
       9,
       {
         id = 9;
-        title = "Parasite";
-        description = "A poor South Korean family schemes to become employed by a wealthy family by infiltrating their household.";
-        releaseDate = "2019-05-30";
-        runtime = "132 minutes";
-        genre = "Drama";
-        quality = "BluRay";
-        posterUrl = "https://picsum.photos/200/300?random=9";
-        videoUrl = "https://www.youtube.com/embed/5xH0HfJHsaY";
-        downloadUrl = "https://example.com/parasite-download";
+        omdbId = "tt0073486";
+        title = "One Flew Over the Cuckoo's Nest";
+        quality = "HDTC";
         category = "Featured";
+        description = "A criminal pleads insanity and is admitted to a mental institution, where he rebels against the oppressive nurse and rallies up the scared patients.";
+        year = "1975";
+        poster = "https://example.com/cuckoosnest.jpg";
       },
     ),
     (
       10,
       {
         id = 10;
-        title = "1917";
-        description = "During World War I, two British soldiers receive seemingly impossible orders.";
-        releaseDate = "2019-12-25";
-        runtime = "119 minutes";
-        genre = "War";
+        omdbId = "tt0110912";
+        title = "Pulp Fiction";
         quality = "WebRip";
-        posterUrl = "https://picsum.photos/200/300?random=10";
-        videoUrl = "https://www.youtube.com/embed/YqNYrYUiMfg";
-        downloadUrl = "https://example.com/1917-download";
-        category = "Trending";
+        category = "New Release";
+        description = "The lives of two mob hitmen, a boxer, a gangster's wife, and a pair of diner bandits intertwine in four tales of violence and redemption.";
+        year = "1994";
+        poster = "https://example.com/pulpfiction.jpg";
       },
     ),
     (
       11,
       {
         id = 11;
-        title = "Soul";
-        description = "A musician who has lost his passion for music is transported out of his body and must find his way back.";
-        releaseDate = "2020-12-25";
-        runtime = "100 minutes";
-        genre = "Animation";
-        quality = "HDTC";
-        posterUrl = "https://picsum.photos/200/300?random=11";
-        videoUrl = "https://www.youtube.com/embed/xOsLIiBStEs";
-        downloadUrl = "https://example.com/soul-download";
-        category = "New Release";
+        omdbId = "tt0120737";
+        title = "The Lord of the Rings: The Fellowship of the Ring";
+        quality = "BluRay";
+        category = "Top IMDb";
+        description = "A meek Hobbit from the Shire and eight companions set out on a journey to destroy the powerful One Ring and save Middle-earth from the Dark Lord Sauron.";
+        year = "2001";
+        poster = "https://example.com/lotr1.jpg";
       },
     ),
     (
       12,
       {
         id = 12;
-        title = "No Time to Die";
-        description = "James Bond returns to face new challenges and dangerous criminals in his latest adventure.";
-        releaseDate = "2021-10-08";
-        runtime = "163 minutes";
-        genre = "Action";
-        quality = "HDTC";
-        posterUrl = "https://picsum.photos/200/300?random=12";
-        videoUrl = "https://www.youtube.com/embed/BIhNsAtPbPI";
-        downloadUrl = "https://example.com/notimetodie-download";
-        category = "New Release";
+        omdbId = "tt0109830";
+        title = "Forrest Gump";
+        quality = "WebRip";
+        category = "Featured";
+        description = "The presidencies of Kennedy and Johnson, the Vietnam War, the Watergate scandal and other history unfold through the perspective of an Alabama man with an IQ of 75.";
+        year = "1994";
+        poster = "https://example.com/forrestgump.jpg";
       },
     ),
   ].values());
@@ -219,48 +181,33 @@ actor {
     movies.values().toArray();
   };
 
-  public query ({ caller }) func getMovieById(id : Nat) : async Movie {
-    switch (movies.get(id)) {
-      case (null) { Runtime.trap("Movie not found") };
-      case (?movie) { movie };
-    };
-  };
-
   public query ({ caller }) func getMoviesByCategory(category : Text) : async [Movie] {
-    let filteredMovies = movies.filter(
-      func(_id, movie) {
-        movie.category == category;
-      }
+    let filtered = movies.values().toArray().filter(
+      func(movie) { movie.category == category }
     );
-    filteredMovies.values().toArray();
+    filtered;
   };
 
-  func getNextId() : Nat {
-    let existingIds = movies.keys().toArray();
-    if (existingIds.size() == 0) { return 1 };
-    let maxId = existingIds.foldLeft(
-      0,
-      func(acc, current) { if (current > acc) { current } else { acc } },
-    );
-    maxId + 1;
-  };
-
-  public shared ({ caller }) func addMovie(movie : Movie) : async () {
-    let newMovie : Movie = { movie with id = getNextId() };
-    movies.add(newMovie.id, newMovie);
-  };
-
-  public shared ({ caller }) func updateMovie(id : Nat, movie : Movie) : async () {
-    if (not movies.containsKey(id)) {
-      Runtime.trap("Movie not found");
+  public shared ({ caller }) func addMovie(omdbId : Text, title : Text, quality : Text, category : Text, description : Text, year : Text, poster : Text) : async Nat {
+    let id = nextId;
+    let movie : Movie = {
+      id;
+      omdbId;
+      title;
+      quality;
+      category;
+      description;
+      year;
+      poster;
     };
-    let updatedMovie : Movie = { movie with id };
-    movies.add(id, updatedMovie);
+    movies.add(id, movie);
+    nextId += 1;
+    id;
   };
 
-  public shared ({ caller }) func deleteMovie(id : Nat) : async () {
+  public shared ({ caller }) func removeMovie(id : Nat) : async () {
     if (not movies.containsKey(id)) {
-      Runtime.trap("Movie not found");
+      Runtime.trap("No movie with this id to remove. ");
     };
     movies.remove(id);
   };
